@@ -32,10 +32,9 @@ connection.connect(() => {
     ("Kamilla");
 `, (err, resp) => {
   if (err) {
-    console.log(err)
+    console.error(err)
     return
   }
-  console.log(resp)
   return
 })
 
@@ -56,7 +55,7 @@ app.listen(port, ()=> {
     SELECT * FROM people;
   `, (err, resp) => {
     if (err) {
-      console.log(err)
+      console.error(err)
       return
     }
 
