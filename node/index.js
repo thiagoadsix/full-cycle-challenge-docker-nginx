@@ -16,6 +16,12 @@ const connection = createConnection(config)
 let peoples = []
 
 connection.connect(() => {
+  createTable()
+
+  console.log('Connected in database.')
+})
+
+function createTable(params) {
   connection.query(`
     CREATE TABLE IF NOT EXISTS people(
       ID INT NOT NULL AUTO_INCREMENT, 
@@ -23,23 +29,7 @@ connection.connect(() => {
       PRIMARY KEY (ID)
     )
   `)
-
-  connection.query(`
-  INSERT INTO people(name)
-  VALUES
-    ("Thiago"),
-    ("Thaina"),
-    ("Kamilla");
-`, (err, resp) => {
-  if (err) {
-    console.error(err)
-    return
-  }
-  return
-})
-
-  console.log('Connected in database.')
-})
+}
 
 app.get('/', (req,res) => {
   res.send(`
@@ -51,6 +41,20 @@ app.get('/', (req,res) => {
 })
 
 app.listen(port, ()=> {
+  connection.query(`
+    INSERT INTO people(name)
+    VALUES
+      ("Thiago"),
+      ("Thaina"),
+      ("Kamilla");
+  `, (err, resp) => {
+    if (err) {
+      console.error(err)
+      return
+    }
+    return
+  })
+
   connection.query(`
     SELECT * FROM people;
   `, (err, resp) => {
