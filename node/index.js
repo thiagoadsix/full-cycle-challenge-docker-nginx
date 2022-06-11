@@ -11,17 +11,17 @@ const config = {
   database:'nodedb'
 }
 
-const connection = createConnection(config)
 
 let peoples = []
 
-connection.connect(() => {
-  createTable()
 
-  console.log('Connected in database.')
-})
+app.get('/', (req,res) => {
+  const connection = createConnection(config)
 
-function createTable(params) {
+  connection.connect(() => {
+    console.log('Connected in database.')
+  })
+
   connection.query(`
     CREATE TABLE IF NOT EXISTS people(
       ID INT NOT NULL AUTO_INCREMENT, 
@@ -29,18 +29,7 @@ function createTable(params) {
       PRIMARY KEY (ID)
     )
   `)
-}
 
-app.get('/', (req,res) => {
-  res.send(`
-    <h1>Full Cycle Rocks!</h1>
-    <ul>
-      ${peoples.map(people => `<li>${people.name}</li>`)}
-    </ul>
-  `)
-})
-
-app.listen(port, ()=> {
   connection.query(`
     INSERT INTO people(name)
     VALUES
@@ -55,19 +44,21 @@ app.listen(port, ()=> {
     return
   })
 
-  connection.query(`
-    SELECT * FROM people;
-  `, (err, resp) => {
+  connection.query(`SELECT * FROM people;`, (err, resp) => {
     if (err) {
       console.error(err)
       return
     }
 
-    resp.forEach(people => {
-      peoples.push({ name: people.NAME })
-    })
-    return
+    res.send(`
+      <h1>Full Cycle Rocks!</h1>
+      <ul>
+        ${resp.map(people => `<li>${people.NAME}</li>`)}
+      </ul>
+    `)
   })
+})
 
+app.listen(port, ()=> {
   console.log('Rodando na porta ' + port)
 })
